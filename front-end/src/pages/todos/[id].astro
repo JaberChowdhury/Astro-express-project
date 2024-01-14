@@ -1,0 +1,31 @@
+---
+import Todoaction from "@/components/Todoaction";
+import Todo from "@/components/Todo";
+import Layout from "@/layouts/Layout.astro";
+import $todos from "@/store/Todos";
+export const getStaticPaths = () => {
+  if (!$todos.get().isLoading) {
+    const todos = $todos.get().data.map((todo) => {
+      return {
+        params: todo,
+      };
+    });
+    return todos;
+  }
+};
+const { id } = Astro.params;
+const data = $todos.get().data.filter((todo) => id === todo.id)[0];
+
+const info = {
+  id: id,
+  from: "todos",
+};
+---
+
+<Layout title={`Todos - id : ${id}`}>
+  <main class="px-2 pt-20">
+    <h1 class="text-center my-10 font-bold text-2xl underline">Todos</h1>
+    <Todo data={data} />
+    <Todoaction info={JSON.stringify(info)} client:load />
+  </main>
+</Layout>
