@@ -3,9 +3,31 @@ import Todoaction from "@/components/Todoaction";
 import Todo from "@/components/Todo";
 import Layout from "@/layouts/Layout.astro";
 import $deletedtodos from "@/store/DeletedTodos";
-export const getStaticPaths = () => {
+import axios from "axios";
+
+type todoType = {
+  id: string;
+  todo: string;
+  description: string;
+  time: string;
+  lastUpdated?: string;
+  title?: string;
+};
+
+export const getStaticPaths = async () => {
   if (!$deletedtodos.get().isLoading) {
-    const todos = $deletedtodos.get().data.map((todo) => {
+    const res = await axios.get(
+      "http://localhost:5174/api/v1/deletedTodos/get",
+    );
+    const data = await res.data.todos.map((todo: todoType) => {
+      return {
+        id: todo.id,
+        description: todo.description,
+        todo: todo.title,
+        time: todo.lastUpdated,
+      };
+    });
+    const todos = await data.map((todo: todoType) => {
       return {
         params: todo,
       };

@@ -1,0 +1,48 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import axios from "axios";
+
+type todoType = {
+  id: string;
+  todo: string;
+  description: string;
+  time: string;
+  lastUpdated?: string;
+  title?: string;
+};
+
+const res = await axios.get("http://localhost:5174/api/v1/todos/get");
+const todos = await res.data.todos.map((todo: todoType) => {
+  return {
+    id: todo.id,
+    description: todo.description,
+    todo: todo.title,
+    time: todo.lastUpdated,
+  };
+});
+
+const response = await fetch("https://randomuser.me/api/");
+const data = await response.json();
+const randomUser = data.results[0];
+---
+
+<Layout title="testing ssr">
+  <main class="pt-20">
+    <h1>User</h1>
+    <h2>{randomUser.name.first} {randomUser.name.last}</h2>
+
+    <h1>testing ssr</h1>
+    <div>
+      {
+        todos.map((todo: todoType) => {
+          return (
+            <div>
+              <div>{todo.todo}</div>
+              <div>{todo.description}</div>
+            </div>
+          );
+        })
+      }
+    </div>
+  </main>
+</Layout>

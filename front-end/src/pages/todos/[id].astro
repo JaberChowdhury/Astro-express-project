@@ -3,9 +3,29 @@ import Todoaction from "@/components/Todoaction";
 import Todo from "@/components/Todo";
 import Layout from "@/layouts/Layout.astro";
 import $todos from "@/store/Todos";
-export const getStaticPaths = () => {
+import axios from "axios";
+
+type todoType = {
+  id: string;
+  todo: string;
+  description: string;
+  time: string;
+  lastUpdated?: string;
+  title?: string;
+};
+
+export const getStaticPaths = async () => {
   if (!$todos.get().isLoading) {
-    const todos = $todos.get().data.map((todo) => {
+    const res = await axios.get("http://localhost:5174/api/v1/todos/get");
+    const data = await res.data.todos.map((todo: todoType) => {
+      return {
+        id: todo.id,
+        description: todo.description,
+        todo: todo.title,
+        time: todo.lastUpdated,
+      };
+    });
+    const todos = await data.map((todo: todoType) => {
       return {
         params: todo,
       };
@@ -17,12 +37,12 @@ const { id } = Astro.params;
 const data = $todos.get().data.filter((todo) => id === todo.id)[0];
 
 const info = {
-  id: id,
   from: "todos",
+  id: id,
 };
 ---
 
-<Layout title={`Todos - id : ${id}`}>
+<Layout title={`Deleted Todos - id : ${id}`}>
   <main class="px-2 pt-20">
     <h1 class="text-center my-10 font-bold text-2xl underline">Todos</h1>
     <Todo data={data} />

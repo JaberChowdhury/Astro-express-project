@@ -8,11 +8,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowUpRight } from "lucide-react";
-import { useStore } from "@nanostores/react";
-import $deletedtodos from "@/store/DeletedTodos";
+// import { useStore } from "@nanostores/react";
+// import $deletedtodos from "@/store/DeletedTodos";
+type todoType = {
+  id: string;
+  todo: string;
+  description: string;
+  time: string;
+  lastUpdated?: string;
+  title?: string;
+};
 
-const Deletedlist = () => {
-  const todos = useStore($deletedtodos);
+type propsType = {
+  todos: todoType[];
+};
+
+const Deletedlist = ({ todos }: propsType) => {
   return (
     <Table>
       <TableCaption>A list of your recent deleted todos</TableCaption>
@@ -25,7 +36,7 @@ const Deletedlist = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {todos.data.map((todo, id) => (
+        {todos.map((todo, id) => (
           <TableRow key={todo.id}>
             <TableCell>{id + 1}</TableCell>
             <TableCell className="font-medium">{todo.todo}</TableCell>
